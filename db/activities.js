@@ -39,10 +39,15 @@ async function getActivityById(id) {
 
 async function getActivityByName(name) {
   try {
-    const { rows: [activity] } = await client.query(`
+    const {
+      rows: [activity],
+    } = await client.query(
+      `
       SELECT * FROM activities
       WHERE name = $1;
-    `, [name]);
+    `,
+      [name]
+    );
     return activity;
   } catch (error) {
     throw error;
@@ -108,17 +113,49 @@ async function createActivity({ name, description }) {
 // do update the name and description
 // return the updated activity
 async function updateActivity({ id, ...fields }) {
-  console.log("line 111: our field data!!", fields)
-  try {
-    const { rows: [activity] } = await client.query(`
+  console.log("line 111: our field data!!", fields);
+  if (fields.name) {
+    try {
+      const {
+        rows: [activity],
+      } = await client.query(
+        `
     UPDATE activities
-    SET ${fields}
-    WHERE id = ${id}
+    SET name=$1
+    WHERE id = $2
     RETURNING *;
-    `)
-    return activity;
-  } catch (error) {
-    throw error;
+    `,
+        [fields.name, id]
+      );
+      console.log("line 120: THIS IS UPDATED ACTIVITY", fields.name, activity);
+      return activity;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  if (fields.description) {
+    try {
+      const {
+        rows: [activity],
+      } = await client.query(
+        `
+    UPDATE activities
+    SET description=$1
+    WHERE id = $2
+    RETURNING *;
+    `,
+        [fields.description, id]
+      );
+      console.log(
+        "Line: 135: THIS IS UPDATED DESCRIPTION",
+        fields.description,
+        activity
+      );
+      return activity;
+    } catch (error) {
+      throw error;
+    }
   }
 }
 
