@@ -3,6 +3,7 @@
 const client = require("./client");
 const {
   createUser,
+  createActivity,
 } = require("./")
 
 async function dropTables() {
@@ -12,6 +13,7 @@ async function dropTables() {
     console.log("Starting to drop tables...");
     await client.query(`
     DROP TABLE IF EXISTS users;
+    DROP TABLE IF EXISTS activities;
     `)
     console.log("Finished dropping tables!");
   } catch (error) {
@@ -30,6 +32,12 @@ async function createTables() {
       username varchar(255) UNIQUE NOT NULL,
       password varchar(255) NOT NULL
       );
+
+    CREATE TABLE activities (
+      id SERIAL PRIMARY KEY,
+      name varchar(255) UNIQUE NOT NULL,
+      description TEXT NOT NULL
+    );
       `);
     console.log("Finished building tables!");
   } catch (error) {
