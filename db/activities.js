@@ -8,6 +8,7 @@ async function getAllActivities() {
     SELECT id, name, description 
     FROM activities;
    `);
+    console.log("this is rows activities data!!", rows);
     return rows;
   } catch (error) {
     throw error;
@@ -26,11 +27,10 @@ async function getActivityById(id) {
     const {
       rows: [activity],
     } = await client.query(
-      `SELECT id, name, description 
+      `SELECT *
       FROM activities
-      WHERE id=$1;
-      `,
-      [id]
+      WHERE id=${id};
+      `
     );
     if (!activity) {
       throw {
@@ -38,6 +38,7 @@ async function getActivityById(id) {
         message: "Could not find an activity with that activityId",
       };
     }
+    return activity;
   } catch (error) {
     throw error;
   }
