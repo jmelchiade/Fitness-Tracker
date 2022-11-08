@@ -5,34 +5,80 @@ const client = require("./client");
 
 // user functions
 async function createUser({ username, password }) {
-//   const SALT_COUNT = 10;
-// const hashedPassword = await bcrypt.hash(password, SALT_COUNT)
+  //   const SALT_COUNT = 10;
+  // const hashedPassword = await bcrypt.hash(password, SALT_COUNT)
 
-// console.log("username and password!!", username, password);
+  // console.log("username and password!!", username, password);
   try {
-  const { rows: [user] }= await client.query(`
+    const {
+      rows: [user],
+    } = await client.query(
+      `
   INSERT INTO users(username, password)
   VALUES($1, $2)
   ON CONFLICT (username) DO NOTHING
-  RETURNING *;
-  `, [username, password]);
-  return user;   
+  RETURNING id, username;
+  `,
+      [username, password]
+    );
+    // return user.id, user.username;
+    // const userInfo = { user.id, user.username };
+    // console.log(userInfo)
+    return user;
   } catch (error) {
     throw error;
   }
 }
 
-
 async function getUser({ username, password }) {
-
+  try {
+    const user = await getUserByUsername(username);
+    console.log("this is user data", user);
+    if (user.password === password) {
+      // const userInfo = {}
+      return user;
+    }
+    // if (user) return user.username;
+  } catch (error) {
+    throw error;
+  }
 }
 
 async function getUserById(userId) {
+  try {
+    const {
+      rows: [user],
+    } = await client.query(`
+  SELECT id, username
+  FROM users
+  WHERE id = ${userId}
+  `);
 
+    if (!user) {
+      return null;
+    }
+    // console.log("getUserById return data", user);
+    return user;
+  } catch (error) {
+    throw error;
+  }
 }
 
 async function getUserByUsername(userName) {
-
+  try {
+    const {
+      rows: [user],
+    } = await client.query(
+      `
+    SELECT * FROM users
+    WHERE username = $1;
+    `,
+      [userName]
+    );
+    return user;
+  } catch (error) {
+    throw error;
+  }
 }
 
 module.exports = {
@@ -40,4 +86,4 @@ module.exports = {
   getUser,
   getUserById,
   getUserByUsername,
-}
+};
