@@ -1,4 +1,5 @@
 /* eslint-disable no-useless-catch */
+const { id_ID } = require("faker/lib/locales");
 const client = require("./client");
 
 // database functions
@@ -35,10 +36,10 @@ async function getUser({ username, password }) {
     const user = await getUserByUsername(username);
     console.log("this is user data", user);
     if (user.password === password) {
-      // const userInfo = {}
-      return user;
-    }
-    // if (user) return user.username;
+      delete user.password
+      console.log("if password verifies user data", user)
+        return user;
+    } 
   } catch (error) {
     throw error;
   }
