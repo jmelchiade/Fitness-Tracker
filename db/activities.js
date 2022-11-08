@@ -3,10 +3,45 @@ const client = require("./client");
 
 // database functions
 async function getAllActivities() {
-
+  try {
+    const { rows } = await client.query(`
+    SELECT id, name, description 
+    FROM activities;
+   `);
+    return rows;
+  } catch (error) {
+    throw error;
+  }
 }
+//   const { rows: activityIds } = await client.(`
+//   SELECT id
+//   FROM activities
+//   `);
+//  const activities = await Promise.all(
+//   activityIds.map((activity)=> getActivityById(activity.id))
+//  );
 
-async function getActivityById(id) {}
+async function getActivityById(id) {
+  try {
+    const {
+      rows: [activity],
+    } = await client.query(
+      `SELECT id, name, description 
+      FROM activities
+      WHERE id=$1;
+      `,
+      [id]
+    );
+    if (!activity) {
+      throw {
+        name: "ActivityNotFoundError",
+        message: "Could not find an activity with that activityId",
+      };
+    }
+  } catch (error) {
+    throw error;
+  }
+}
 
 async function getActivityByName(name) {}
 
@@ -48,13 +83,18 @@ async function attachActivitiesToRoutines(routines) {
 // return the new activity
 async function createActivity({ name, description }) {
   try {
-    const { rows: [activity] } = await client.query(`
+    const {
+      rows: [activity],
+    } = await client.query(
+      `
     INSERT INTO activities (name, description)
     VALUES($1, $2)
     ON CONFLICT (name) DO NOTHING
-    RETURNING *;
-    `, [name, description]);
-    return activity
+    RETURNING  id, name, description;
+    `,
+      [name, description]
+    );
+    return activity;
   } catch (error) {
     throw error;
   }
