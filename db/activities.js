@@ -8,19 +8,12 @@ async function getAllActivities() {
     SELECT id, name, description 
     FROM activities;
    `);
-    console.log("this is rows activities data!!", rows);
+    // console.log("line 11: this is rows activities data!!", rows);
     return rows;
   } catch (error) {
     throw error;
   }
 }
-//   const { rows: activityIds } = await client.(`
-//   SELECT id
-//   FROM activities
-//   `);
-//  const activities = await Promise.all(
-//   activityIds.map((activity)=> getActivityById(activity.id))
-//  );
 
 async function getActivityById(id) {
   try {
@@ -44,7 +37,17 @@ async function getActivityById(id) {
   }
 }
 
-async function getActivityByName(name) {}
+async function getActivityByName(name) {
+  try {
+    const { rows: [activity] } = await client.query(`
+      SELECT * FROM activities
+      WHERE name = $1;
+    `, [name]);
+    return activity;
+  } catch (error) {
+    throw error;
+  }
+}
 
 // select and return an array of all activities
 async function attachActivitiesToRoutines(routines) {
@@ -104,7 +107,20 @@ async function createActivity({ name, description }) {
 // don't try to update the id
 // do update the name and description
 // return the updated activity
-async function updateActivity({ id, ...fields }) {}
+async function updateActivity({ id, ...fields }) {
+  console.log("line 111: our field data!!", fields)
+  try {
+    const { rows: [activity] } = await client.query(`
+    UPDATE activities
+    SET ${fields}
+    WHERE id = ${id}
+    RETURNING *;
+    `)
+    return activity;
+  } catch (error) {
+    throw error;
+  }
+}
 
 module.exports = {
   getAllActivities,
