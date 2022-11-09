@@ -1,10 +1,22 @@
+/* eslint-disable no-useless-catch */
 const client = require("./client");
 
 async function getRoutineById(id) {}
 
 async function getRoutinesWithoutActivities() {}
 
-async function getAllRoutines() {}
+async function getAllRoutines() {
+  try {
+    const { rows } = await client.query(`
+    SELECT id, "creatorId", "isPublic", name, goal
+    FROM routines;
+    `);
+    console.log("line 14: this is rows routines data!!", rows);
+    return rows;
+  } catch (error) {
+    throw error;
+  }
+}
 
 async function getAllRoutinesByUser({ username }) {}
 
@@ -15,23 +27,23 @@ async function getAllPublicRoutines() {}
 async function getPublicRoutinesByActivity({ id }) {}
 
 async function createRoutine({ creatorId, isPublic, name, goal }) {
-  // try {
-  //   const {
-  //     rows: [routines],
-  //   } = await client.query(
-  //     `
-  //   INSERT INTO public_routines
-  //   (creator_id, is_public, name, goal)
-  //   VALUES ($1, $2, $3, $4)
-  //   ON CONFLICT DO NOTHING
-  //   RETURNING *
-  //   `,
-  //     [creatorId, isPublic, name, goal]
-  //   );
-  //   return routines;
-  // } catch (error) {
-  //   console.log(error);
-  // }
+  try {
+    const {
+      rows: [routines],
+    } = await client.query(
+      `
+    INSERT INTO routines
+    ("creatorId", "isPublic", name, goal)
+    VALUES ($1, $2, $3, $4)
+    RETURNING *
+    `,
+      [creatorId, isPublic, name, goal]
+    );
+    console.log("created routines here!!", routines)
+    return routines;
+  } catch (error) {
+    throw error;
+  }
 }
 
 async function updateRoutine({ id, ...fields }) {}
