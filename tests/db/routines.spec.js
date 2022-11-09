@@ -213,7 +213,7 @@ describe("DB Routines", () => {
     });
   });
 
-  xdescribe("getAllRoutinesByUser", () => {
+  describe("getAllRoutinesByUser", () => {
     it("should get the public routine for the user", async () => {
       const routines = await getAllRoutinesByUser(fakeUser);
       expectRoutinesToContainRoutine(routines, fakeRoutine);
