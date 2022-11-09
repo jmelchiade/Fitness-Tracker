@@ -1,18 +1,47 @@
 /* eslint-disable no-useless-catch */
+const { attachActivitiesToRoutines } = require("./activities");
 const client = require("./client");
 
-async function getRoutineById(id) {}
+async function getRoutineById(id) {
+  try {
+    const {
+      rows: [routine],
+    } = await client.query(
+      `
+    SELECT * 
+    FROM routines
+    WHERE id=$1
+  `,
+      [id]
+    );
+    return routine;
+  } catch (error) {
+    console.log(error);
+  }
+}
 
-async function getRoutinesWithoutActivities() {}
+async function getRoutinesWithoutActivities() {
+  try {
+    const { rows } = await client.query(`
+  SELECT *
+  FROM routines;
+  `);
+
+    return rows;
+  } catch (error) {
+    throw error;
+  }
+}
 
 async function getAllRoutines() {
   try {
     const { rows } = await client.query(`
-    SELECT id, "creatorId", "isPublic", name, goal
-    FROM routines;
-    `);
-    console.log("line 14: this is rows routines data!!", rows);
-    return rows;
+SELECT routines.*, users.username AS "creatorName"
+FROM routines
+JOIN users ON users.id = routines."creatorId"
+`);
+    const routines = attachActivitiesToRoutines(rows);
+    return routines;
   } catch (error) {
     throw error;
   }
@@ -39,7 +68,6 @@ async function createRoutine({ creatorId, isPublic, name, goal }) {
     `,
       [creatorId, isPublic, name, goal]
     );
-    console.log("created routines here!!", routines)
     return routines;
   } catch (error) {
     throw error;
