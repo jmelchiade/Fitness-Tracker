@@ -55,7 +55,7 @@ async function getRoutineActivitiesByRoutine({ id }) {
     FROM routine_activities
     WHERE "routineId"=$1
   `,
-      [id]
+      [routine_activity]
     );
     console.log("This is routine activity by routine", routine_activity);
     return routine_activity;
