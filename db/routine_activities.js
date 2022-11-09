@@ -1,7 +1,24 @@
 /* eslint-disable no-useless-catch */
 const client = require("./client");
 
-async function getRoutineActivityById(id) {}
+async function getRoutineActivityById(id) {
+  try {
+    const {
+      rows: [routine_activity],
+    } = await client.query(
+      `
+    SELECT * 
+    FROM routine_activities
+    WHERE id=$1
+  `,
+      [id]
+    );
+    console.log("This is routine activity data", routine_activity);
+    return routine_activity;
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 async function addActivityToRoutine({
   routineId,
@@ -21,6 +38,7 @@ async function addActivityToRoutine({
       `,
       [routineId, activityId, count, duration]
     );
+    console.log("This is adding activity to routine", routineActivity);
     return routineActivity;
   } catch (error) {
     throw error;
