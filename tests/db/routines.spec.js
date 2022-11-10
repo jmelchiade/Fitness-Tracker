@@ -163,7 +163,7 @@ describe("DB Routines", () => {
     });
   });
 
-  xdescribe("getAllPublicRoutines", () => {
+  describe("getAllPublicRoutines", () => {
     it("should include the public routine", async () => {
       const routines = await getAllPublicRoutines();
       expectRoutinesToContainRoutine(routines, fakeRoutine);
@@ -213,7 +213,7 @@ describe("DB Routines", () => {
     });
   });
 
-  xdescribe("getAllRoutinesByUser", () => {
+  describe("getAllRoutinesByUser", () => {
     it("should get the public routine for the user", async () => {
       const routines = await getAllRoutinesByUser(fakeUser);
       expectRoutinesToContainRoutine(routines, fakeRoutine);
@@ -383,7 +383,7 @@ describe("DB Routines", () => {
     });
   });
 
-  describe("createRoutine", () => {
+  xdescribe("createRoutine", () => {
     it("creates and returns the new routine", async () => {
       const user = await createFakeUser();
       const routine = await createRoutine({
@@ -397,7 +397,7 @@ describe("DB Routines", () => {
     });
   });
 
-  describe("updateRoutine", () => {
+  xdescribe("updateRoutine", () => {
     it("Returns the updated routine", async () => {
       const fakeRoutine = await createFakePublicRoutine();
 
@@ -442,7 +442,7 @@ describe("DB Routines", () => {
     });
   });
 
-  describe("destroyRoutine", () => {
+  xdescribe("destroyRoutine", () => {
     it("removes routine from database", async () => {
       const fakeRoutine = await createFakePublicRoutine();
       await destroyRoutine(fakeRoutine.id);

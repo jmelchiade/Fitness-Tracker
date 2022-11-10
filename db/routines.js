@@ -17,7 +17,7 @@ async function getRoutineById(id) {
     );
     return routine;
   } catch (error) {
-    console.log(error);
+    throw error;
   }
 }
 
@@ -49,20 +49,26 @@ JOIN users ON users.id = routines."creatorId"
 }
 
 async function getAllRoutinesByUser({ username }) {
-  // try {
-  //   const user = await getUserByUsername(username)
-  //   console.log("the user data via username", user)
-  //   const userId = user.id
-  //   const { rows: [routines] } = await client.query(`
-  //   SELECT *
-  //   FROM routines
-  //   WHERE "creatorId" = $1
-  //   `, [userId])
-  //   console.log("get all routines by user data here!!", routines)
-  //   return routines;
-  // } catch (error) {
-  //   throw error
-  // }
+  try {
+    const user = await getUserByUsername(username);
+    console.log("the user data via username", user);
+    const userId = user.id;
+    const {
+      rows: [routines],
+    } = await client.query(
+      `
+    SELECT routines.*, users.username AS "creatorName" 
+    FROM routines
+    JOIN users ON users.id=routines."creatorId"
+    WHERE "creatorId" = $1
+    `,
+      [userId]
+    );
+    console.log("get all routines by user data here!!", routines);
+    return routines;
+  } catch (error) {
+    throw error;
+  }
 }
 
 async function getPublicRoutinesByUser({ username }) {
