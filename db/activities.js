@@ -113,7 +113,7 @@ async function createActivity({ name, description }) {
 // do update the name and description
 // return the updated activity
 async function updateActivity({ id, ...fields }) {
-  console.log("line 111: our field data!!", fields);
+  // console.log("line 111: our field data!!", fields);
   if (fields.name) {
     try {
       const {

@@ -76,6 +76,7 @@ async function getUserByUsername(userName) {
     `,
       [userName]
     );
+    console.log("user by username data here!!", user)
     return user;
   } catch (error) {
     throw error;
