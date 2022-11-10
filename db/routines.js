@@ -108,7 +108,24 @@ async function getAllPublicRoutines() {
   }
 }
 
-async function getPublicRoutinesByActivity({ id }) {}
+async function getPublicRoutinesByActivity({ id }) {
+  try {
+    const { rows } = await client.query(
+      `
+  SELECT routines.*, users.username AS "creatorName"
+  FROM routines
+  JOIN users ON routines."creatorId"=users.id
+  JOIN routine_activities ON routines.id=routine_activities."routineId"
+  WHERE "isPublic" = true
+  AND routine_activities."activityId" = $1
+  `,
+      [id]
+    );
+    return attachActivitiesToRoutines(rows);
+  } catch (error) {
+    throw error;
+  }
+}
 
 async function createRoutine({ creatorId, isPublic, name, goal }) {
   try {
