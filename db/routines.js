@@ -92,7 +92,22 @@ async function createRoutine({ creatorId, isPublic, name, goal }) {
 
 async function updateRoutine({ id, ...fields }) {}
 
-async function destroyRoutine(id) {}
+
+async function destroyRoutine(id) {
+  const { rows: [routine_activities] } = await client.query(`
+  DELETE FROM routine_activities
+  WHERE "routineId" = $1
+  RETURNING *
+  `, [id])
+
+  const { rows: [routine] } = await client.query(`
+  DELETE FROM routines
+  WHERE id=$1
+  RETURNING *
+`, [id]);
+
+    return [routine, routine_activities]
+}
 
 module.exports = {
   getRoutineById,
