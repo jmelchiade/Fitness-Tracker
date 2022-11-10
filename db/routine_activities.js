@@ -1,4 +1,5 @@
 /* eslint-disable no-useless-catch */
+const { attachActivitiesToRoutines } = require("./activities");
 const client = require("./client");
 
 async function getRoutineActivityById(id) {
@@ -51,16 +52,22 @@ async function getRoutineActivitiesByRoutine({ id }) {
       rows: [routine_activity],
     } = await client.query(
       `
-    SELECT * 
+    SELECT routine_activities.*
     FROM routine_activities
     WHERE "routineId"=$1
   `,
       [routine_activity]
     );
+    if (!rows) {
+      throw {
+        name: "routineActivitiesNotFoundError",
+        message: "Could not find a routine activity with that routine",
+      };
+    }
     console.log("This is routine activity by routine", routine_activity);
-    return routine_activity;
+    return attachActivitiesToRoutines(rows);
   } catch (error) {
-    console.log(error);
+    throw error;
   }
 }
 
