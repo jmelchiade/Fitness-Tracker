@@ -53,11 +53,12 @@ async function getAllRoutinesByUser({ username }) {
     const user = await getUserByUsername(username);
     console.log("the user data via username", user);
     const userId = user.id;
+    console.log("This is the userId", userId);
     const {
       rows: [routines],
     } = await client.query(
       `
-    SELECT routines.*, users.username AS "creatorName" 
+    SELECT routines.*
     FROM routines
     JOIN users ON users.id=routines."creatorId"
     WHERE "creatorId" = $1
