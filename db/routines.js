@@ -54,9 +54,7 @@ async function getAllRoutinesByUser({ username }) {
     console.log("the user data via username", user);
     const userId = user.id;
     console.log("This is the userId", userId);
-    const {
-      rows: routines
-    } = await client.query(
+    const { rows: routines } = await client.query(
       `
     SELECT routines.*, users.username AS "creatorName"
     FROM routines
@@ -66,20 +64,33 @@ async function getAllRoutinesByUser({ username }) {
       [userId]
     );
     console.log("get all routines by user data here!!", routines);
-    return attachActivitiesToRoutines(routines)
+    return attachActivitiesToRoutines(routines);
   } catch (error) {
     throw error;
   }
 }
 
 async function getPublicRoutinesByUser({ username }) {
-  // try {
-  //   const userRoutines = await getAllRoutinesByUser(username);
-  //   console.log("user routines here!!", userRoutines);
-  //   // return userRoutines
-  // } catch (error) {
-  //   throw error;
-  // }
+  try {
+    // const userRoutines = await getAllRoutinesByUser(username);
+    // console.log("user routines here!!", userRoutines);
+    // return userRoutines
+    const user = await getUserByUsername(username);
+    const userId = user.id;
+    const { rows: routines } = await client.query(
+      `
+      SELECT routines.*, users.username AS "creatorName"
+      FROM routines
+      JOIN users ON routines."creatorId"=users.id
+      WHERE "creatorId"=$1 
+      AND "isPublic" = true
+    `,
+      [userId]
+    );
+    return attachActivitiesToRoutines(routines);
+  } catch (error) {
+    throw error;
+  }
 }
 
 async function getAllPublicRoutines() {
