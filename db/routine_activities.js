@@ -48,15 +48,13 @@ async function addActivityToRoutine({
 
 async function getRoutineActivitiesByRoutine({ id }) {
   try {
-    const {
-      rows: [routine_activity],
-    } = await client.query(
+    const { rows } = await client.query(
       `
     SELECT routine_activities.*
     FROM routine_activities
     WHERE "routineId"=$1
   `,
-      [routine_activity]
+      [id]
     );
     if (!rows) {
       throw {
@@ -64,7 +62,6 @@ async function getRoutineActivitiesByRoutine({ id }) {
         message: "Could not find a routine activity with that routine",
       };
     }
-    console.log("This is routine activity by routine", routine_activity);
     return attachActivitiesToRoutines(rows);
   } catch (error) {
     throw error;
