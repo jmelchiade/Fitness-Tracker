@@ -70,7 +70,23 @@ async function getRoutineActivitiesByRoutine({ id }) {
 
 async function updateRoutineActivity({ id, ...fields }) {}
 
-async function destroyRoutineActivity(id) {}
+async function destroyRoutineActivity(id) {
+  const {
+    rows: [routine_activity],
+  } = await client.query(
+    `
+  DELETE FROM routine_activities
+  WHERE id=$1
+  RETURNING *
+  `,
+    [id]
+  );
+  console.log(
+    "This is a deleted routine from routine_activities table",
+    routine_activity
+  );
+  return routine_activity;
+}
 
 async function canEditRoutineActivity(routineActivityId, userId) {}
 
