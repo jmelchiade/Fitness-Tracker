@@ -14,7 +14,7 @@ async function getRoutineActivityById(id) {
   `,
       [id]
     );
-    // console.log("This is routine activity data", routine_activity);
+    console.log("This is routine activity data", routine_activity);
     return routine_activity;
   } catch (error) {
     console.log(error);
@@ -39,7 +39,7 @@ async function addActivityToRoutine({
       `,
       [routineId, activityId, count, duration]
     );
-    // console.log("This is adding activity to routine", routineActivity);
+    console.log("This is adding activity to routine", routineActivity);
     return routineActivity;
   } catch (error) {
     throw error;
@@ -81,31 +81,14 @@ async function destroyRoutineActivity(id) {
   `,
     [id]
   );
-  // console.log(
-  //   "This is a deleted routine from routine_activities table",
-  //   routine_activity
-  // );
+  console.log(
+    "This is a deleted routine from routine_activities table",
+    routine_activity
+  );
   return routine_activity;
 }
 
-async function canEditRoutineActivity(routineActivityId, userId) {
-  try {
-    // console.log("routine activity id param here!", routineActivityId);
-    const { rows: [routine] } = await client.query(`
-    SELECT * FROM routine_activities
-    JOIN routines ON routines.id = routine_activities."routineId" 
-    AND routine_activities.id = $1
-    `, [routineActivityId]);
-    if (userId === routine.creatorId) {
-      return true
-    }
-    else {
-      return false
-    }
-  } catch (error) {
-    throw error;
-  }
-}
+async function canEditRoutineActivity(routineActivityId, userId) {}
 
 module.exports = {
   getRoutineActivityById,
