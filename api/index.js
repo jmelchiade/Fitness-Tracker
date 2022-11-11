@@ -5,7 +5,6 @@ const router = express.Router();
 router.get("/health", async (req, res, next) => {
   res.send({ message: "is healthy" });
   next();
-  // res.send({"is healthy"})
 });
 
 // ROUTER: /api/users
