@@ -19,23 +19,36 @@ userRouter.post("/login", async (req, res, next) => {
   try {
     const user = await getUserByUsername(username);
 
+    if (user) {
+      next({
+        name: "duplicateUser",
+        message: `User ${username} already exists`,
+        error: "error",
+      });
+    } else {
+      const user = createUser({ username, password });
+      const token = jwt.sign(
+        { id: user.id, username: user.username },
+        process.env.JWT_SECRET
+      );
+    }
+
     if (user && user.password == password) {
       // create token & return to user
-      console.log(user);
-      console.log(process.env.JWT_SECRET, "is the test");
 
       const token = jwt.sign(
         { id: user.id, username: user.username },
         process.env.JWT_SECRET
       );
 
-      res.send({ message: "you're logged in!", token: token });
+      res.send({ user, message: "you're logged in!", token: token });
     } else {
       next({
         name: "IncorrectCredentialsError",
         message: "Username or password is incorrect",
         error: "error",
       });
+      return user;
     }
   } catch (error) {
     console.log(error);
