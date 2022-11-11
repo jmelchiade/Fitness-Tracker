@@ -51,7 +51,7 @@ userRouter.post("/register", async (req, res, next) => {
     if (password.length < 8) {
       next({
         name: "PasswordLengthError",
-        message: "Password must be a minimum of 8 characters",
+        message: "Password Too Short!",
         error: "error",
       });
     }
@@ -61,7 +61,7 @@ userRouter.post("/register", async (req, res, next) => {
     if (user) {
       next({
         name: "duplicateUser",
-        message: `User ${username} already exists`,
+        message: `User ${username} is already taken.`,
         error: "error",
       });
     } else {
@@ -94,21 +94,21 @@ userRouter.post("/register", async (req, res, next) => {
 
 // GET /api/users/me
 
-// userRouter.get("/me", requireUser, async (req, res, next) => {
-//   try {
-//     if (req.user) {
-//       res.send(req.user);
-//     } else {
-//       next({
-//         name: "RequireUserError",
-//         message: "",
-//         error: "",
-//       });
-//     }
-//   } catch ({ name, message, error }) {
-//     next({ name, message, error });
-//   }
-// });
+userRouter.get("/me", requireUser, async (req, res, next) => {
+  try {
+    if (req.user) {
+      res.send(req.user);
+    } else {
+      next({
+        name: "MissingUserError",
+        message: "You must be logged in to perform this action",
+        error: "MissingUserError",
+      });
+    }
+  } catch ({ name, message, error }) {
+    next({ name, message, error });
+  }
+});
 
 // GET /api/users/:username/routines
 
