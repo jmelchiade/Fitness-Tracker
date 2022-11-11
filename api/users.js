@@ -2,6 +2,8 @@ const express = require("express");
 const userRouter = express.Router();
 const jwt = require("jsonwebtoken");
 const { createUser, getUserByUsername } = require("../db");
+const { JWT_SECRET } = process.env;
+const { requireUser } = require("./utils");
 
 // POST /api/users/login
 
@@ -102,7 +104,7 @@ userRouter.post("/register", async (req, res, next) => {
 //       res.send(req.user);
 //     } else {
 //       next({
-//         name: "",
+//         name: "RequireUserError",
 //         message: "",
 //         error: "",
 //       });
