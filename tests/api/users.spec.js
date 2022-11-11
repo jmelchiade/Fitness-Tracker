@@ -201,7 +201,7 @@ describe("/api/users", () => {
     });
   });
 
-  xdescribe("GET /api/users/me", () => {
+  describe("GET /api/users/me", () => {
     it("sends back users data if valid token is supplied in header", async () => {
       const { fakeUser, token } = await createFakeUserWithToken();
 
