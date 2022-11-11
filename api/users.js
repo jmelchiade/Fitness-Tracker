@@ -17,7 +17,7 @@ userRouter.post("/login", async (req, res, next) => {
       message: "Please supply both a username and password",
     });
   }
-
+  //duplicate user if statement should be in register not in login... Jen
   try {
     const user = await getUserByUsername(username);
 
