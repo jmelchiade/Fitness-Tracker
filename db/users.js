@@ -9,7 +9,6 @@ async function createUser({ username, password }) {
   //   const SALT_COUNT = 10;
   // const hashedPassword = await bcrypt.hash(password, SALT_COUNT)
 
-  // console.log("username and password!!", username, password);
   try {
     const {
       rows: [user],
@@ -22,9 +21,6 @@ async function createUser({ username, password }) {
   `,
       [username, password]
     );
-    // return user.id, user.username;
-    // const userInfo = { user.id, user.username };
-    // console.log(userInfo)
     return user;
   } catch (error) {
     throw error;
@@ -34,12 +30,10 @@ async function createUser({ username, password }) {
 async function getUser({ username, password }) {
   try {
     const user = await getUserByUsername(username);
-    console.log("this is user data", user);
     if (user.password === password) {
-      delete user.password
-      console.log("if password verifies user data", user)
-        return user;
-    } 
+      delete user.password;
+      return user;
+    }
   } catch (error) {
     throw error;
   }
@@ -58,7 +52,6 @@ async function getUserById(userId) {
     if (!user) {
       return null;
     }
-    // console.log("getUserById return data", user);
     return user;
   } catch (error) {
     throw error;
@@ -76,7 +69,6 @@ async function getUserByUsername(userName) {
     `,
       [userName]
     );
-    console.log("user by username data here!!", user)
     return user;
   } catch (error) {
     throw error;

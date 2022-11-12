@@ -1,14 +1,15 @@
 const express = require("express");
-const userRouter = express.Router();
+const usersRouter = express.Router();
 const jwt = require("jsonwebtoken");
-const { createUser, getUserByUsername } = require("../db/users.js");
+const { getPublicRoutinesByUser, getAllRoutinesByUser } = require("../db/routines.js");
+const { createUser, getUserByUsername, } = require("../db/users.js");
 const { JWT_SECRET } = process.env;
-const { token } = require("morgan");
+// const { token } = require("morgan");
 const { requireUser } = require("./utils");
 
 // POST /api/users/login
 
-userRouter.post("/login", async (req, res, next) => {
+usersRouter.post("/login", async (req, res, next) => {
   const { username, password } = req.body;
 
   // request must have both
@@ -44,10 +45,12 @@ userRouter.post("/login", async (req, res, next) => {
 });
 
 // POST /api/users/register
-userRouter.post("/register", async (req, res, next) => {
+usersRouter.post("/register", async (req, res, next) => {
   const { username, password } = req.body;
 
   try {
+    const _user = await getUserByUsername(username);
+
     if (password.length < 8) {
       next({
         name: "PasswordLengthError",
@@ -56,9 +59,7 @@ userRouter.post("/register", async (req, res, next) => {
       });
     }
 
-    const user = await getUserByUsername(username);
-
-    if (user) {
+    if (_user) {
       next({
         name: "duplicateUser",
         message: `User ${username} is already taken.`,
@@ -75,7 +76,7 @@ userRouter.post("/register", async (req, res, next) => {
           id: user.id,
           username,
         },
-        process.env.JWT_SECRET,
+        JWT_SECRET,
         {
           expiresIn: "1w",
         }
@@ -94,7 +95,7 @@ userRouter.post("/register", async (req, res, next) => {
 
 // GET /api/users/me
 
-userRouter.get("/me", requireUser, async (req, res, next) => {
+usersRouter.get("/me", requireUser, async (req, res, next) => {
   try {
     if (req.user) {
       res.send(req.user);
@@ -111,5 +112,38 @@ userRouter.get("/me", requireUser, async (req, res, next) => {
 });
 
 // GET /api/users/:username/routines
+usersRouter.get("/:username/routines", async(req, res, next) => {
+  try {
+    const username = req.params;
+    const routines = await getPublicRoutinesByUser(username);
+    res.send(routines)
+  } catch ({ name, message, error }) {
+    next({ name, message, error });
+  }
+}) 
 
-module.exports = userRouter;
+//previous func is pass both tests but im unsure if its working as intended
+//should we get return the username routines AND current user routines?
+//or are these seperate things based on a logged in user or not?
+//if so, do we get all routines and filter accordingly or can we res.send 
+//two seperate objects of data-unsure how currently
+
+// usersRouter.get("/:username/routines", async(req, res, next) => {
+//   try {
+//     const username = req.params;
+//     const userRoutines = await getPublicRoutinesByUser(username);
+//     // res.send(userRoutines)
+  
+//     if (req.user) {
+//       const currentUserUsername = req.user.username
+//       const currentUserRoutines = await getAllRoutinesByUser(currentUserUsername)
+//       console.log("banana", currentUserUsername, currentUserRoutines)
+//       res.send({userRoutines, currentUserRoutines})
+//     }
+  
+//   } catch ({ name, message, error }) {
+//     next({ name, message, error });
+//   }
+// }) 
+
+module.exports = usersRouter;

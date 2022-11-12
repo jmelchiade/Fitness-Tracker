@@ -51,9 +51,7 @@ JOIN users ON users.id = routines."creatorId"
 async function getAllRoutinesByUser({ username }) {
   try {
     const user = await getUserByUsername(username);
-    console.log("the user data via username", user);
     const userId = user.id;
-    console.log("This is the userId", userId);
     const { rows: routines } = await client.query(
       `
     SELECT routines.*, users.username AS "creatorName"
@@ -63,7 +61,6 @@ async function getAllRoutinesByUser({ username }) {
     `,
       [userId]
     );
-    console.log("get all routines by user data here!!", routines);
     return attachActivitiesToRoutines(routines);
   } catch (error) {
     throw error;
@@ -72,9 +69,6 @@ async function getAllRoutinesByUser({ username }) {
 
 async function getPublicRoutinesByUser({ username }) {
   try {
-    // const userRoutines = await getAllRoutinesByUser(username);
-    // console.log("user routines here!!", userRoutines);
-    // return userRoutines
     const user = await getUserByUsername(username);
     const userId = user.id;
     const { rows: routines } = await client.query(
