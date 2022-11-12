@@ -8,7 +8,6 @@ async function getAllActivities() {
     SELECT id, name, description 
     FROM activities;
    `);
-    // console.log("line 11: this is rows activities data!!", rows);
     return rows;
   } catch (error) {
     throw error;
@@ -113,7 +112,6 @@ async function createActivity({ name, description }) {
 // do update the name and description
 // return the updated activity
 async function updateActivity({ id, ...fields }) {
-  // console.log("line 111: our field data!!", fields);
   if (fields.name) {
     try {
       const {
@@ -127,7 +125,6 @@ async function updateActivity({ id, ...fields }) {
     `,
         [fields.name, id]
       );
-      console.log("line 120: THIS IS UPDATED ACTIVITY", fields.name, activity);
       return activity;
     } catch (error) {
       throw error;
@@ -146,11 +143,6 @@ async function updateActivity({ id, ...fields }) {
     RETURNING *;
     `,
         [fields.description, id]
-      );
-      console.log(
-        "Line: 135: THIS IS UPDATED DESCRIPTION",
-        fields.description,
-        activity
       );
       return activity;
     } catch (error) {

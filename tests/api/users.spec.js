@@ -223,7 +223,7 @@ describe("/api/users", () => {
     });
   });
 
-  xdescribe("GET /api/users/:username/routines", () => {
+  describe("GET /api/users/:username/routines", () => {
     it("Gets a list of public routines for a particular user.", async () => {
       // Create a fake user with a bunch of routines associated
       const { fakeUser, token } = await createFakeUserWithRoutines("Greg");

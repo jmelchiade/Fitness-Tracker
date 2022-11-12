@@ -1,21 +1,20 @@
 const express = require("express");
-const router = express.Router();
+const apiRouter = express.Router();
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = process.env;
 const { getUserById } = require("../db/users");
 
 // GET /api/health
-router.get("/health", async (req, res, next) => {
+apiRouter.get("/health", async (req, res, next) => {
   res.send({ message: "is healthy" });
   next();
 });
 
-router.use(async (req, res, next) => {
-  const prefix = "Bearer";
+apiRouter.use(async (req, res, next) => {
+  const prefix = "Bearer ";
   const auth = req.header("Authorization");
 
   if (!auth) {
-    //nothing to see here
     next();
   } else if (auth.startsWith(prefix)) {
     const token = auth.slice(prefix.length);
@@ -40,21 +39,21 @@ router.use(async (req, res, next) => {
 
 // ROUTER: /api/users
 const usersRouter = require("./users");
-router.use("/users", usersRouter);
+apiRouter.use("/users", usersRouter);
 
 // ROUTER: /api/activities
 const activitiesRouter = require("./activities");
-router.use("/activities", activitiesRouter);
+apiRouter.use("/activities", activitiesRouter);
 
 // ROUTER: /api/routines
 const routinesRouter = require("./routines");
-router.use("/routines", routinesRouter);
+apiRouter.use("/routines", routinesRouter);
 
 // ROUTER: /api/routine_activities
 const routineActivitiesRouter = require("./routineActivities");
-router.use("/routine_activities", routineActivitiesRouter);
+apiRouter.use("/routine_activities", routineActivitiesRouter);
 
-router.use((error, req, res, next) => {
+apiRouter.use((error, req, res, next) => {
   error.error == "Unauthorized" && res.status(401);
   const errorObj = {
     error: error.name,
@@ -64,4 +63,4 @@ router.use((error, req, res, next) => {
   res.send(errorObj);
 });
 
-module.exports = router;
+module.exports = apiRouter;
