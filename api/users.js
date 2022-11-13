@@ -124,9 +124,9 @@ usersRouter.get("/:username/routines", async(req, res, next) => {
 
 //previous func is pass both tests but im unsure if its working as intended
 //should we get return the username routines AND current user routines?
-//or are these seperate things based on a logged in user or not?
+//or are these separate things based on a logged in user or not?
 //if so, do we get all routines and filter accordingly or can we res.send 
-//two seperate objects of data-unsure how currently
+//two separate objects of data-unsure how currently
 
 // usersRouter.get("/:username/routines", async(req, res, next) => {
 //   try {

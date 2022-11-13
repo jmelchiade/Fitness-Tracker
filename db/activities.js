@@ -24,12 +24,12 @@ async function getActivityById(id) {
       WHERE id=${id};
       `
     );
-    if (!activity) {
-      throw {
-        name: "ActivityNotFoundError",
-        message: "Could not find an activity with that activityId",
-      };
-    }
+    // if (!activity) {
+    //   throw {
+    //     name: "ActivityNotFoundError",
+    //     message: "Could not find an activity with that activityId",
+    //   };
+    // }
     return activity;
   } catch (error) {
     throw error;
@@ -112,6 +112,7 @@ async function createActivity({ name, description }) {
 // do update the name and description
 // return the updated activity
 async function updateActivity({ id, ...fields }) {
+  // console.log("fields data pear!", fields)
   if (fields.name) {
     try {
       const {
@@ -125,6 +126,7 @@ async function updateActivity({ id, ...fields }) {
     `,
         [fields.name, id]
       );
+      // console.log("activity data apple!", activity)
       return activity;
     } catch (error) {
       throw error;
@@ -144,6 +146,7 @@ async function updateActivity({ id, ...fields }) {
     `,
         [fields.description, id]
       );
+      // console.log("activity data banana!", activity)
       return activity;
     } catch (error) {
       throw error;
