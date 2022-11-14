@@ -100,7 +100,7 @@ describe("/api/routines", () => {
     });
   });
 
-  xdescribe("PATCH /api/routines/:routineId (**)", () => {
+  describe("PATCH /api/routines/:routineId (**)", () => {
     it("Updates a routine, notably changing public/private, the name, and the goal", async () => {
       const { fakeUser, token } = await createFakeUserWithToken("Bradley");
       // Create a routine so we can update it.
