@@ -4,7 +4,10 @@ const {
   createRoutine,
   getRoutineById,
   updateRoutine,
+  destroyRoutine,
+  getRoutineActivitiesByRoutine,
 } = require("../db");
+const client = require("../db/client");
 const routinesRouter = express.Router();
 const { requireUser } = require("./utils");
 
@@ -50,7 +53,7 @@ routinesRouter.patch("/:routineId", requireUser, async (req, res, next) => {
   const { isPublic, name, goal } = req.body;
   const routine = await getRoutineById(routineId);
   const updateFields = {};
-  console.log("banana", isPublic);
+  // console.log("banana", isPublic);
   if (isPublic === true || isPublic === false) {
     updateFields.isPublic = isPublic;
   }
@@ -63,7 +66,7 @@ routinesRouter.patch("/:routineId", requireUser, async (req, res, next) => {
     updateFields.goal = goal;
   }
   updateFields.id = routineId;
-  console.log("routine fields data here!", updateFields);
+  // console.log("routine fields data here!", updateFields);
 
   try {
     if (routine.creatorId !== req.user.id) {
@@ -83,6 +86,31 @@ routinesRouter.patch("/:routineId", requireUser, async (req, res, next) => {
 });
 
 // DELETE /api/routines/:routineId
+routinesRouter.delete("/:routineId", requireUser, async (req, res, next) => {
+  try {
+    const routine = await getRoutineById(req.params.routineId);
+    // const routine_activities = await getRoutineActivitiesByRoutine(routine);
+    console.log(routine, "routine activities data");
+
+    if (routine && routine.creatorId === req.user.id) {
+      const destroyedData = await destroyRoutine(routine.id);
+      console.log("banana", destroyedData);
+      const returnData = destroyedData[0];
+
+      console.log(returnData, "Orange!");
+      res.send(returnData);
+    } else {
+      next({
+        name: "UserAuthorizationError",
+        message: `User ${req.user.username} is not allowed to delete ${routine.name}`,
+        error: "UserAuthorizationError",
+      });
+      res.status(403);
+    }
+  } catch ({ name, message, error }) {
+    next({ name, message, error });
+  }
+});
 
 // POST /api/routines/:routineId/activities
 
