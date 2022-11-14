@@ -111,6 +111,7 @@ usersRouter.get("/me", requireUser, async (req, res, next) => {
   }
 });
 
+//ask in office hour if this route is set up right-testing is weird??
 // GET /api/users/:username/routines
 usersRouter.get("/:username/routines", async(req, res, next) => {
   try {

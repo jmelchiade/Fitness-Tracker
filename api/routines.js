@@ -85,6 +85,7 @@ routinesRouter.patch("/:routineId", requireUser, async (req, res, next) => {
   }
 });
 
+//ask in office hour-failing test for send 403 status either/or on delete and patch functions-why?
 // DELETE /api/routines/:routineId
 routinesRouter.delete("/:routineId", requireUser, async (req, res, next) => {
   try {

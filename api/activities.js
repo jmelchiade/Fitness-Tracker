@@ -1,6 +1,6 @@
 const express = require('express');
 const activitiesRouter = express.Router();
-const { getAllActivities, createActivity, getActivityByName, updateActivity, getActivityById } = require('../db');
+const { getAllActivities, createActivity, getActivityByName, updateActivity, getActivityById, getPublicRoutinesByActivity } = require('../db');
 const { requireUser } = require("./utils");
 
 // GET /api/activities
@@ -47,18 +47,14 @@ activitiesRouter.patch("/:activityId", requireUser, async(req, res, next) => {
     updateFields.id = Number(activityId)
 
     if (name) {
-        // console.log(name)
         updateFields.name = name
     }
     if (description) {
-        // console.log(description)
         updateFields.description = description
     }
-    console.log("fields data here!!", updateFields)
 
     try {
     const activity = await getActivityById(activityId);
-    console.log("activity data here!!", activity)
     if (!activity) {
         next({
             name: "ActivityNotFoundError",
@@ -78,7 +74,6 @@ activitiesRouter.patch("/:activityId", requireUser, async(req, res, next) => {
 
     else {
         const updatedActivity = await updateActivity(updateFields);
-        console.log("updated activity data!!", updatedActivity)
         res.send(updatedActivity);
     }
 } catch ({ name, message, error }) {
@@ -87,6 +82,27 @@ activitiesRouter.patch("/:activityId", requireUser, async(req, res, next) => {
 })
 
 // GET /api/activities/:activityId/routines
+activitiesRouter.get("/:activityId/routines", async(req, res, next) => {
+    const { activityId } = req.params;
+    try {
+        const activity = await getActivityById(activityId)
+        if (!activity) {
+            next({
+                name: "ActivityNotFoundError",
+                message: `Activity ${activityId} not found`,
+                error: "ActivityNotFoundError"
+            });
+        }
+        else {
+            const publicRoutines = await getPublicRoutinesByActivity(activity)
+            res.send(publicRoutines)
+        }
+
+    }  catch ({ name, message, error }) {
+            next({ name, message, error });
+            }
+})
+
 
 
 module.exports = activitiesRouter;
