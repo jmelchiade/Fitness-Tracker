@@ -111,46 +111,65 @@ async function createActivity({ name, description }) {
 // don't try to update the id
 // do update the name and description
 // return the updated activity
-async function updateActivity({ id, ...fields }) {
-  // console.log("fields data pear!", fields)
-  if (fields.name) {
-    try {
-      const {
-        rows: [activity],
-      } = await client.query(
-        `
-    UPDATE activities
-    SET name=$1
-    WHERE id = $2
-    RETURNING *;
-    `,
-        [fields.name, id]
-      );
-      // console.log("activity data apple!", activity)
-      return activity;
-    } catch (error) {
-      throw error;
-    }
-  }
+// async function updateActivity({ id, ...fields }) {
+//   if (fields.name) {
+//     try {
+//       const {
+//         rows: [activity],
+//       } = await client.query(
+//         `
+//     UPDATE activities
+//     SET name=$1
+//     WHERE id = $2
+//     RETURNING *;
+//     `,
+//         [fields.name, id]
+//       );
+//       // console.log("activity data apple!", activity)
+//       return activity;
+//     } catch (error) {
+//       throw error;
+//     }
+//   }
 
-  if (fields.description) {
-    try {
-      const {
-        rows: [activity],
-      } = await client.query(
-        `
-    UPDATE activities
-    SET description=$1
-    WHERE id = $2
-    RETURNING *;
-    `,
-        [fields.description, id]
+//   if (fields.description) {
+//     try {
+//       const {
+//         rows: [activity],
+//       } = await client.query(
+//         `
+//     UPDATE activities
+//     SET description=$1
+//     WHERE id = $2
+//     RETURNING *;
+//     `,
+//         [fields.description, id]
+//       );
+//       // console.log("activity data banana!", activity)
+//       return activity;
+//     } catch (error) {
+//       throw error;
+//     }
+//   }
+// }
+
+async function updateActivity({ id, ...fields }) {
+  const setString = Object.keys(fields).map((key, index) => `"${key}"=$${index + 1}`).join(",");
+  try {
+    if (setString.length > 0) {
+      const { rows: [activity], } = await client.query(`
+      UPDATE activities
+      SET ${setString}
+      WHERE id = ${id}
+      RETURNING *;
+      `,
+      Object.values(fields)
       );
-      // console.log("activity data banana!", activity)
+      console.log("updated activity data!!", activity)
       return activity;
-    } catch (error) {
-      throw error;
     }
+  } catch (error) {
+    throw error;
   }
 }
 
