@@ -43,46 +43,44 @@ activitiesRouter.patch("/:activityId", requireUser, async(req, res, next) => {
 
     const { activityId } = req.params;
     const { name, description } = req.body
-    const updateFields = {
-        name,
-        description
-    };
-    // if (name) {
-    //     console.log(name)
-    //     updateFields.name = name
-    // }
-    // if (description) {
-    //     console.log(description)
-    //     updateFields.description = description
-    // }
+    const updateFields = {};
+    updateFields.id = Number(activityId)
+
+    if (name) {
+        // console.log(name)
+        updateFields.name = name
+    }
+    if (description) {
+        // console.log(description)
+        updateFields.description = description
+    }
     console.log("fields data here!!", updateFields)
 
     try {
-    // const activityIdCheck = await getActivityById(activityId);
-    // if (!activityIdCheck) {
-    //     next({
-    //         name: "ActivityNotFoundError",
-    //         message: `Activity ${activityId} not found`,
-    //         error: "ActivityNotFoundError"
-    //     });
-    // }
+    const activity = await getActivityById(activityId);
+    console.log("activity data here!!", activity)
+    if (!activity) {
+        next({
+            name: "ActivityNotFoundError",
+            message: `Activity ${activityId} not found`,
+            error: "ActivityNotFoundError"
+        });
+    }
 
-    // const activityNameCheck = await getActivityByName(name);
-    // if (activityNameCheck) {
-    //     next({
-    //         name: "ActivityExistsError",
-    //         message: `An activity with name ${name} already exists`,
-    //         error: "ActivityExistsError",
-    //     });
-    // }
+    const activityNameCheck = await getActivityByName(name);
+    if (activityNameCheck) {
+        next({
+            name: "ActivityExistsError",
+            message: `An activity with name ${name} already exists`,
+            error: "ActivityExistsError",
+        });
+    }
 
-    // else {
-        console.log("banana", updateFields)
-        const updatedActivity = await updateActivity(activityId, updateFields);
-        // const updatedActivity = "hello!"
+    else {
+        const updatedActivity = await updateActivity(updateFields);
         console.log("updated activity data!!", updatedActivity)
-        res.send({updatedActivity});
-    // }
+        res.send(updatedActivity);
+    }
 } catch ({ name, message, error }) {
     next({ name, message, error });
     }
